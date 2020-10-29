@@ -16,7 +16,11 @@ const dbName = 'website.db'
  */
 router.get('/', async ctx => {
 	try {
-		await ctx.render('index', ctx.hbs)
+		if(ctx.hbs.authorised) {
+			return ctx.redirect('/home')
+		} else {
+			return ctx.redirect('/login?msg=login required')
+		}
 	} catch(err) {
 		await ctx.render('error', ctx.hbs)
 	}
@@ -65,7 +69,7 @@ router.post('/login', async ctx => {
 		const body = ctx.request.body
 		await account.login(body.user, body.pass)
 		ctx.session.authorised = true
-		const referrer = body.referrer || '/secure'
+		const referrer = body.referrer || '/home'
 		return ctx.redirect(`${referrer}?msg=you are now logged in...`)
 	} catch(err) {
 		ctx.hbs.msg = err.message
