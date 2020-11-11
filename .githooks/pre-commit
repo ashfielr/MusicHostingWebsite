@@ -65,6 +65,11 @@ if [ $problemFound = 1  ]; then
   read -p "Run linter with --fix tag? (y/n) " RE_RUN_LINTER
   if [[ "$RE_RUN_LINTER" == "y" ]]; then
     problemFound=$(node_modules/.bin/eslint . --fix | grep problem | wc -l)
+    
+    # add the files to staging area again to stage the changes made 
+    # tr command used to replace new lines with spaces
+    git add $(git diff --name-only --cached | tr '\n\r' ' ')
+    
     if [ $problemFound = 1  ]; then
       echo 'FAIL - Linter problem(s) found after running with --fix'
       echo 'Run linter to see details.'
