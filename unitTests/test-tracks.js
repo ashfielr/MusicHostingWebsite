@@ -12,7 +12,7 @@ test('ADD TRACK : add a valid track to registered user', async test => {
 	const tracks = await new Tracks()
 	try {
 		/* Arrange */
-		await addTestUser(tracks)  
+		await addTestUser(tracks)
 		const userID = 1
 
 		/* Act */

@@ -234,3 +234,12 @@ td:last-child {
 	width: 10vw;
 	text-align: right;
 }
+
+.albumImageCol {
+  width: auto;
+}
+
+.albumImage {
+  width: 150px;
+  height: 150px;
+}

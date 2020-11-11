@@ -12,8 +12,8 @@
 	</head>
 	<body>
 		<header>
-		<h1>Home Page</h1>
-		<a href="/logout">Log out</a>
+		  <h1>Home Page</h1>
+		  <a href="/logout">Log out</a>
 		</header>
 		{{#if msg}}
       <aside>
@@ -21,7 +21,27 @@
       </aside>
 		{{/if}}
 		<main>
-		<p>This is a secure home page. Users need to have a valid account and be logged in to see it.</p>
+      <h2>Uploaded Tracks</h2>
+      <table class="userUploadedTracks">
+        {{#each userTracks}}
+        <tr>
+          <td class="albumImageCol">
+            {{#if this.albumArt}}
+              <img class="albumImage" src="{{host}}/tracks/albumArt/{{this.albumArt}}" alt="Album art">
+            {{else}}
+              <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
+            {{/if}}
+          </td>
+          <td class="trackInfo">
+            <p class="trackName">{{this.trackName}}</p>
+            <p class="artist">{{this.artist}}</p>
+          </td>
+          <td>
+           <p class="duration">{{this.duration}}</p>
+          </td>
+        </tr>
+        {{/each}}
+      </table>
 		</main>
 	</body>
 </html>

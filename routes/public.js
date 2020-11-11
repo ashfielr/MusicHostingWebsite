@@ -69,6 +69,11 @@ router.post('/login', async ctx => {
 		const body = ctx.request.body
 		await account.login(body.user, body.pass)
 		ctx.session.authorised = true
+
+		// keep the id of the user to use it to get user's tracks
+		ctx.session.userID = await account.getUserID(body.user)
+
+		// redirect to update the cookie in browser
 		const referrer = body.referrer || '/home'
 		return ctx.redirect(`${referrer}?msg=you are now logged in...`)
 	} catch(err) {

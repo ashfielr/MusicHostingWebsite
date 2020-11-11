@@ -23,9 +23,14 @@ class Tracks {
 				(id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pass TEXT, email TEXT);'
 			await this.db.run(sql)
 			sql = 'CREATE TABLE IF NOT EXISTS tracks(\
-          trackID INTEGER PRIMARY KEY AUTOINCREMENT,\
-          userID INTEGER, trackFile TEXT,\
-          FOREIGN KEY(userID) REFERENCES users(id));'
+            trackID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
+            userID INTEGER NOT NULL,\
+            trackFile TEXT NOT NULL,\
+            trackName TEXT,\
+            artist TEXT,\
+            albumArt TEXT,\
+            duration INTEGER,\
+            FOREIGN KEY(userID) REFERENCES users(id));'
 			await this.db.run(sql)
 			return this
 		})()
@@ -58,7 +63,7 @@ class Tracks {
 	 * Adds a new track
 	 * @param {Number} userID The user who is uploading the file
 	 * @param {String} trackFile The filename and extension of track
-	 * @returns {Boolean} Returns true if the new user has been added
+	 * @returns {Boolean} Returns true if the new track has been added
 	 */
 	async addTrack(userID, trackFile) {
 		Array.from(arguments).forEach( val => {
