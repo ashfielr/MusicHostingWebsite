@@ -1,0 +1,38 @@
+
+# .github/workflows/multi-stage-pipeline.yaml
+
+name: Multi-Stage Pipeline
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+    types: [opened, reopened]
+jobs:
+  Linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install linter tool
+        run: npm install eslint
+      - name: Run linter
+        run: node_modules/.bin/eslint .
+  Unit-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install testing tools
+        run: npm install
+      - name: Run test suite
+        run : node_modules/.bin/ava
+      
+  
