@@ -5,9 +5,11 @@ name: Multi-Stage Pipeline
 
 on:
   push:
-    branches: ['*']
+    # ** - Allows '/' character in branch names
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+    branches: ['**'] 
   pull_request:
-    branches: ['*']
+    branches: ['**']
     types: [opened, reopened]
 jobs:
   Linter:
