@@ -21,27 +21,27 @@
       </aside>
 		{{/if}}
 		<main>
-      <h2>Uploaded Tracks</h2>
-      <table class="userUploadedTracks">
+      <section>
+        <h2>Uploaded Tracks</h2>
         {{#each userTracks}}
-        <tr>
-          <td class="albumImageCol">
-            {{#if this.albumArt}}
-              <img class="albumImage" src="{{host}}/tracks/albumArt/{{this.albumArt}}" alt="Album art">
-            {{else}}
-              <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
-            {{/if}}
-          </td>
-          <td class="trackInfo">
-            <p class="trackName">{{this.trackName}}</p>
-            <p class="artist">{{this.artist}}</p>
-          </td>
-          <td>
-           <p class="duration">{{this.duration}}</p>
-          </td>
-        </tr>
-        {{/each}}
-      </table>
+        <section class="track-container">
+          <figure class="albumImageContainer">
+          {{#if this.albumArt}}
+            <img class="albumImage" src="{{host}}/tracks/albumArt/{{this.albumArt}}" alt="Album art">
+          {{else}}
+            <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
+          {{/if}} 
+          </figure>  
+          <figcaption class="track-content">
+            <p class="trackName noWrap noMargin bold">{{this.trackName}}</p>
+            <p class="artist noWrap noMargin">{{this.artist}}</p>
+          </figcaption>
+          <figcaption>
+            <p class="duration noWrap noMargin">{{this.duration}}</p> 
+          </figcaption>
+        </section>        
+        {{/each}}              
+      </section>
 		</main>
 	</body>
 </html>

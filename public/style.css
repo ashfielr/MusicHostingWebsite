@@ -1,8 +1,8 @@
 
 body {
-		font-family: Arial, Helvetica, sans-serif;
-		margin: 0;
-	}
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+}
 
 /* formats the red message boxes */
 aside {
@@ -51,7 +51,7 @@ h3 {
 	margin-left: 0.6vw;
 }
 
-header > a {
+body > header > a {
 	margin-top: 3vw;
 	margin-right: 3vw;
 	float: right;
@@ -71,8 +71,10 @@ p, legend {
 }
 
 main {
-	width: 100%;
-	margin-left: 3vw;
+  width: 80%;
+  margin-top: 2vw;
+	margin-left: auto;
+  margin-right: auto;
 	/* background-color: pink; */
 }
 
@@ -100,7 +102,7 @@ main a:hover {
 
 section {
 	background-color: #DDD;
-	width: 24vw;
+	width: auto;
 	margin-top: 1vw;
 	padding: 1vw;
 	border-radius: 1vw;
@@ -235,11 +237,144 @@ td:last-child {
 	text-align: right;
 }
 
-.albumImageCol {
-  width: auto;
+
+.bold {
+  font-weight: bold;
+}
+
+.noMargin {
+  margin: 0;
+}
+
+
+/* === Grid for a track and its info === */
+.track-container {
+  display: grid;
+  align-items: center;
+  justify-items: end;
+  grid-template-columns: auto 5fr 1fr;
+  grid-template-rows: auto;
+  grid-gap: 0vw 1vw;
+  
+  background-color: #FFF;
+  padding: 0;
+  padding-right: 2vw;
+}
+
+/* ===== Grid items ===== */
+.albumImageContainer {
+  margin: 1vw;
 }
 
 .albumImage {
-  width: 150px;
-  height: 150px;
+  width: 5em;
+  height: 5em;
 }
+
+.track-image {
+  display: inline-grid;
+  grid-column: 1;
+}
+
+.track-content {
+  display: inline-grid;
+  grid-column: 2;
+  width: 100%;
+}
+
+.duration {
+  display: inline-grid;
+  grid-column: 3;
+  justify-self: end;
+}
+
+.trackName, .artist { 
+  /* if text is to long hide overflow with ellipsis */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noWrap {
+  white-space: nowrap;
+}
+
+@media (max-device-width: 599px) {
+  main {
+    width: 95%;
+    /*margin-left: auto;
+    margin-right: auto;*/
+  }
+  
+  body > header > a {
+    margin-top: 4vw;
+    font-size: 5vw;
+  }
+  
+  header {
+    height: 15vw
+  }
+  
+  header > h1 {
+    padding-top: 4vw;
+    line-height: 7.5vw;
+  }
+  
+  h1 {
+    font-size: 8vw;
+  }
+  
+  h2 {
+    font-size: 6vw;
+  }
+  
+  .albumImage {
+    width: 15vw;
+    height: 15vw;
+  }
+  
+  p {
+    font-size: 5vw;
+  }
+
+}
+
+@media (min-device-width: 600px) and (max-device-width: 1024px){ 
+  main {
+    width: 90%;
+  }
+  
+  body > header > a {
+    margin-top: 3vw;
+    font-size: 3vw;
+  }
+  
+  header {
+    height: 12vw
+  }
+  
+  header > h1 {
+    padding-top: 4vw;
+    line-height: 6vw;
+  }
+  
+  h1 {
+    font-size: 5vw;
+  }
+  
+  h2 {
+    font-size: 3vw;
+  }
+  
+  .albumImage {
+    width: 10vw;
+    height: 10vw;
+  }
+  
+  p {
+    font-size: 2vw;
+  }
+  
+}
+  
+
+
