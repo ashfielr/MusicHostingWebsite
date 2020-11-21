@@ -1,16 +1,14 @@
 
 # .github/workflows/multi-stage-pipeline.yaml
 
-name: Multi-Stage Pipeline
+name: Code Quality Checks
 
 on:
   push:
     # ** - Allows '/' character in branch names
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
     branches: ['**'] 
-  pull_request:
-    branches: ['**']
-    types: [opened, reopened]
+    
 jobs:
   Linter:
     runs-on: ubuntu-latest

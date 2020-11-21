@@ -1,8 +1,8 @@
 #!/bin/bash
 
-COMMIT_MSG_FILE=$1
-COMMIT_SOURCE=$2
-SHA1=$3
+COMMIT_MSG_FILE=$1 # The commit msg file name - first argument
+COMMIT_SOURCE=$2 # The commit source - second argument
+SHA1=$3 # The commit identifier (SHA1) - third argument
 
 ##### REFERENCE START - https://stackoverflow.com/a/10015707 ####
 # Allows us to read user input below, assigns stdin to keyboard
@@ -14,7 +14,7 @@ exec < /dev/tty
 
 set -e # using the options command to abort script at first error
 echo
-echo "PREPARE-COMMIT-MSG"
+echo "PREPARE-COMMIT-MSG" # Notify user that the prepare-commit-msg git hook is being executed
 
 # Branch to protect
 PROTECTED_BRANCH="master"
@@ -32,7 +32,7 @@ if [[ $2 != 'merge' ]]; then
     MERGE_MASTER=false # ADAPTED LINE
 fi
 
-# Current branch
+# Current branch name
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 # Check if in PROTECTED_BRANCH
@@ -60,12 +60,15 @@ fi
 
 #### END - SAMPLE HOOK PROVIDED ####################
 
-read -p "Summary of commit: " SUMMARY
-read -p "Why are these changes being made: " WHY
-read -p "Details of the changes: " WHAT
+# MY BASH ###
+# Ask the user for the 3 sections of commit message
+# Summary of commit, Why where these changes made, What changes where made
+read -p "Summary of commit: " SUMMARY # Saves users response in SUMMARY variable
+read -p "Why are these changes being made: " WHY # Saves users response in WHY variable
+read -p "Details of the changes: " WHAT # Saves users response in WHAT variable
 
 echo "$SUMMARY" > "$COMMIT_MSG_FILE" # write summary to commit message file
-echo "" >> "$COMMIT_MSG_FILE" # new line - to allow 'git log --oneline' clean look
+echo "" >> "$COMMIT_MSG_FILE" # append new empty line - to allow 'git log --oneline' clean look (lines below first line will be hidden)
 echo "$WHY" >> "$COMMIT_MSG_FILE" # append why
-echo "" >> "$COMMIT_MSG_FILE"
+echo "" >> "$COMMIT_MSG_FILE" # append new empty line - to allow 'git log --oneline' clean look
 echo "$WHAT" >> "$COMMIT_MSG_FILE" # append what

@@ -1,0 +1,16 @@
+
+# .github/workflows/deployment.yaml
+
+name: Deployment
+
+on:
+  push:    
+    workflows: ['Code Quality Checks'] # Run this workflow after the linter and unit testing workflow
+    branches: ['master']
+jobs:
+  Delpoy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy app to heroku # Push the master branch to heroku repository to deploy
+        run: git push -f https://heroku:${{ secrets.HEROKU_API_TOKEN }}@git.heroku.com/${{ secrets.HEROKU_APP }}.git master     
