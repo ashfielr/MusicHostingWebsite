@@ -67,11 +67,11 @@ fi
 # NOTE: if the linter does not detect any warning or errors it will not return anything
 #       Therefore if the command returns a number greater than 0 - there are linter issues
 problemFound=$(node_modules/.bin/eslint . | grep problem | wc -l)
-if [ $problemFound > 0  ]; then
-	echo 'FAIL - Linter problem(s) found'
+if [[ $problemFound > 0  ]]; then
+	echo '  FAIL - Linter problem(s) found'
   
   # Ask user if they want to run linter with --fix tag
-  read -p "Run linter with --fix tag? (y/n) " RE_RUN_LINTER
+  read -p "  Run linter with --fix tag? (y/n) " RE_RUN_LINTER
   # If they enter <y> then run the linter with --fix (to attempt to fix the warnings/errors)
   if [[ "$RE_RUN_LINTER" == "y" ]]; then
     problemFound=$(node_modules/.bin/eslint . --fix | grep problem | wc -l) # Check if linter issues still present
@@ -82,16 +82,18 @@ if [ $problemFound > 0  ]; then
     # with spaces in-between. This can then be used with the "git add" command to stage them all
     git add $(git diff --name-only --cached | tr '\n\r' ' ')
     
-    if [ $problemFound = 1  ]; then
-      echo 'FAIL - Linter problem(s) found after running with --fix'
-      echo 'Run linter to see details.'
+    if [[ $problemFound = 1  ]]; then
+      echo '  FAIL - Linter problem(s) found after running with --fix'
+      echo '    run linter to see details.'
       exit 1 # Abort commit
     fi
   else
-    echo 'Commit aborted'
+    echo '  commit aborted'
     exit 1 # Abort commit
   fi
+else
+  echo '  no linter problems' # Linter didnt find any problems
 fi
 
-# Run the jsDocs executable to produce documentation
+# Run the jsDocs to produce automated documentation
 node_modules/.bin/jsdoc -c jsdoc.conf
