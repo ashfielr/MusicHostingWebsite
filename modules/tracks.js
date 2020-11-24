@@ -80,7 +80,7 @@ class Tracks {
 	/**
 	 * Gets all of the tracks The user has uploaded
 	 * @param {Number} userID The user to get the tracks for
-	 * @returns {Object} Returns the tracks the user has uploaded
+	 * @returns {Object} Returns the tracks the user has uploaded - returns null if user has no tracks.
 	 */
 	async getTracks(userID) {
 		/* Check if user exists with userID */
@@ -90,7 +90,7 @@ class Tracks {
 		/* Get tracks for user */
 		sql = `SELECT * FROM tracks WHERE userID="${userID}";`
 		const tracks = await this.db.all(sql)
-		if(tracks.length === 0) throw new Error(`The user with id "${userID}" has no uploaded tracks`)
+		if(tracks.length === 0) return null
 		return tracks
 	}
 

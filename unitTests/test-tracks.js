@@ -93,7 +93,7 @@ test('GET TRACKS : error if user does not exist', async test => {
 	}
 })
 
-test('GET TRACKS : error if user has no uploaded tracks', async test => {
+test('GET TRACKS : returns null if user has no uploaded tracks', async test => {
 	test.plan(1)
 	const tracks = await new Tracks()
 
@@ -103,12 +103,12 @@ test('GET TRACKS : error if user has no uploaded tracks', async test => {
 
 	try {
 		/* Act */
-		await tracks.getTracks(userID)
+		const userTracks = await tracks.getTracks(userID)
 
 		/* Assert */
-		test.fail('error not thrown')
+		test.is(userTracks, null, 'did not return null')
 	} catch(err) {
-		test.is(err.message, `The user with id "${userID}" has no uploaded tracks`, 'incorrect error message')
+		test.fail('unexpected error was thrown')
 	} finally {
 		tracks.close()
 	}

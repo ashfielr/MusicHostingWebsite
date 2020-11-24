@@ -23,24 +23,28 @@
 		<main>
       <section>
         <h2>Uploaded Tracks</h2>
-        {{#each userTracks}}
-        <section class="track-container">
-          <figure class="albumImageContainer">
-          {{#if this.albumArt}}
-            <img class="albumImage" src="{{host}}/tracks/albumArt/{{this.albumArt}}" alt="Album art">
-          {{else}}
-            <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
-          {{/if}} 
-          </figure>  
-          <figcaption class="track-content">
-            <p class="trackName noWrap noMargin bold">{{this.trackName}}</p>
-            <p class="artist noWrap noMargin">{{this.artist}}</p>
-          </figcaption>
-          <figcaption>
-            <p class="duration noWrap noMargin">{{this.duration}}</p> 
-          </figcaption>
-        </section>        
-        {{/each}}              
+        {{#if userTracks}}
+          {{#each userTracks}}
+          <section class="track-container">
+            <figure class="albumImageContainer">
+            {{#if this.albumArt}}
+              <img class="albumImage" src="{{host}}/tracks/albumArt/{{this.albumArt}}" alt="Album art">
+            {{else}}
+              <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
+            {{/if}}
+            </figure>
+            <figcaption class="track-content">
+              <p class="trackName noWrap noMargin bold">{{this.trackName}}</p>
+              <p class="artist noWrap noMargin">{{this.artist}}</p>
+            </figcaption>
+            <figcaption>
+              <p class="duration noWrap noMargin">{{this.duration}}</p>
+            </figcaption>
+          </section>
+          {{/each}}
+        {{else}}
+          <p>You have no uploaded tracks.</p>
+        {{/if}}
       </section>
 		</main>
 	</body>

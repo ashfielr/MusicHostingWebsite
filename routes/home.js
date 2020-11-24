@@ -19,11 +19,12 @@ router.get('/', async ctx => {
 	const track = await new Tracks(dbName)
 	try {
 		const userTracks = await track.getTracks(ctx.session.userID) // Array of user's tracks
-		console.log(userTracks)
+		console.log(`User's tracks: ${userTracks}`)
 		ctx.hbs.userID = ctx.session.userID
 		ctx.hbs.userTracks = userTracks
 		await ctx.render('home', ctx.hbs)
 	} catch(err) {
+		console.log(err.message)
 		ctx.hbs.error = err.message
 		await ctx.render('error', ctx.hbs)
 	} finally{
