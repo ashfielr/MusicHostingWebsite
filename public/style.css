@@ -269,9 +269,10 @@ td:last-child {
 .albumImage {
   width: 5em;
   height: 5em;
+  object-fit: cover; /* Cover image over the size - no stretch */
 }
 
-.track-image {
+.albumImageContainer {
   display: inline-grid;
   grid-column: 1;
 }
