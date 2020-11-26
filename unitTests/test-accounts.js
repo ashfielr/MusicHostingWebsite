@@ -110,3 +110,44 @@ test('LOGIN    : invalid password', async test => {
 		account.close()
 	}
 })
+
+test('GET USER ID    : existing username', async test => {
+	test.plan(1)
+	const account = await new Accounts()
+	try {
+		/* Arange */
+		await account.register('doej', 'password', 'doej@gmail.com')
+		const expectedID = 1
+
+		/* Act */
+		const id = await account.getUserID('doej')
+
+		/* Assert */
+		test.is(id, expectedID, 'incorrect id returned')
+	} catch(err) {
+		test.fail('error thrown')
+	} finally {
+		account.close()
+	}
+})
+
+test('GET USER ID    : error if username does not exist', async test => {
+	test.plan(1)
+	const account = await new Accounts()
+	const nonExistingUsername = 'jimmy' // a username which does not exist
+	try {
+		/* Arange */
+		await account.register('doej', 'password', 'doej@gmail.com')
+
+		/* Act */
+		await account.getUserID(nonExistingUsername)
+
+		/* Assert */
+		test.fail('no error thrown')
+
+	} catch(err) {
+		test.is(err.message, `username "${nonExistingUsername}" not found`, 'incorrect error message')
+	} finally {
+		account.close()
+	}
+})

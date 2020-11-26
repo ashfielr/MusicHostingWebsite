@@ -1,0 +1,99 @@
+#!/bin/bash
+
+##### REFERENCE START - https://stackoverflow.com/a/10015707 ####
+# Allows us to read user input below, assigns stdin to keyboard
+exec < /dev/tty
+##### REFERENCE END - https://stackoverflow.com/a/10015707 ####
+
+##### START - Sample git hook provided ###############################
+set -e # using the options command to abort script at first error
+echo
+echo "PRE-COMMIT" # Show that the pre-commit hook has started
+
+EMAIL=$(git config user.email) # Store the email of the user
+
+# make sure the user has registered a valid university email address
+# email must have "@coventry.ac.uk" in it
+if [[ $EMAIL != *"@coventry.ac.uk" ]]; then
+	echo "  invalid config settings"
+	echo "  Your registered email is currently '$EMAIL'"
+	echo "  please run the following git commands:"
+	echo "    $ git config user.email xxx@coventry.ac.uk"
+	echo "    $ git config user.name 'zzz'"
+	echo "  where 'xxx' is your university username"
+	echo "  and 'zzz' is your name as it appears on your university ID badge"
+	echo
+	exit 1 # Commit will be aborted
+fi
+
+# see if the user is trying to merge a branch into master
+branch="$(git rev-parse --abbrev-ref HEAD)" # Get the name of the branch
+if [[ $2 == 'merge' ]]; then # if the commit type is a merge
+	echo "merging branch"
+  # Abort commit if trying to merge to master branch and suggest to use a pull request
+	if [[ "$branch" == "master" ]]; then
+		echo "  trying to merge into the 'master' branch"
+		echo "  you should push the local branch to GitHub"
+		echo "  and merge to master using a pull request"
+		echo
+		exit 1 # Commit will be aborted
+	fi
+fi
+
+# check if the user is trying to commit to the master branch but not with a merge (as this case was covered above^)
+if [ "$branch" = "master" ]; then
+	read -p "  You are about to commit to the master branch, are you sure? [y|n] " -n 1 -r < /dev/tty
+	echo
+	if echo $REPLY | grep -E '^[Yy]$' > /dev/null
+	then
+		exit 0 # commit will execute
+	fi
+	exit 1 # commit will not execute
+fi
+##### END - Sample git hook provided ###############################
+
+# Abort commit if a test fails
+# Run unit tests using ava (with --tap flag) and get the number of tests that failed using grep and awk commands
+# Number of fails is in the third "column" on the line with the word "fail"
+numberOfFailedTests=$(node_modules/.bin/ava --tap | grep fail | awk '{print $3}')
+if [[ $numberOfFailedTests != 0  ]]; then
+	echo 'FAIL - Not all tests were passed'
+	echo 'Commit aborted'
+	exit 1 # Commit aborted
+fi
+
+# Abort commit if linter has any problems
+# Use grep to get the lines with the word "problem" and using wc to count number of lines
+# NOTE: if the linter does not detect any warning or errors it will not return anything
+#       Therefore if the command returns a number greater than 0 - there are linter issues
+problemFound=$(node_modules/.bin/eslint . | grep problem | wc -l)
+if [[ $problemFound > 0  ]]; then
+	echo '  FAIL - Linter problem(s) found'
+  
+  # Ask user if they want to run linter with --fix tag
+  read -p "  Run linter with --fix tag? (y/n) " RE_RUN_LINTER
+  # If they enter <y> then run the linter with --fix (to attempt to fix the warnings/errors)
+  if [[ "$RE_RUN_LINTER" == "y" ]]; then
+    problemFound=$(node_modules/.bin/eslint . --fix | grep problem | wc -l) # Check if linter issues still present
+    
+    # Add the files to staging area again to stage the changes made by linter to fix warnings/errors
+    # tr command used to replace new lines with space characters
+    # so the command will return the filenames of files that were modified by the linter
+    # with spaces in-between. This can then be used with the "git add" command to stage them all
+    git add $(git diff --name-only --cached | tr '\n\r' ' ')
+    
+    if [[ $problemFound = 1  ]]; then
+      echo '  FAIL - Linter problem(s) found after running with --fix'
+      echo '    run linter to see details.'
+      exit 1 # Abort commit
+    fi
+  else
+    echo '  commit aborted'
+    exit 1 # Abort commit
+  fi
+else
+  echo '  no linter problems' # Linter didnt find any problems
+fi
+
+# Run the jsDocs to produce automated documentation
+node_modules/.bin/jsdoc -c jsdoc.conf

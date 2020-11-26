@@ -1,0 +1,38 @@
+
+# .github/workflows/multi-stage-pipeline.yaml
+
+name: Code Quality Checks
+
+on:
+  push:
+    # ** - Allows '/' character in branch names
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
+    branches: ['**'] 
+    
+jobs:
+  Linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install linter tool
+        run: npm install eslint
+      - name: Run linter
+        run: node_modules/.bin/eslint .
+  Unit-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install testing tools
+        run: npm install
+      - name: Run test suite
+        run : node_modules/.bin/ava
+      
+  

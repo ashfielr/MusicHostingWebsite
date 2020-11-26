@@ -66,6 +66,20 @@ class Accounts {
 		return true
 	}
 
+	/**
+	 * Gets the id of a user from the username provided
+	 * @param {String} username The username of the user to get the id for
+	 * @returns {Boolean} Returns the id of the user if username provided exists
+	 */
+	async getUserID(username) {
+		let sql = `SELECT count(id) AS count FROM users WHERE user="${username}";`
+		const records = await this.db.get(sql)
+		if(!records.count) throw new Error(`username "${username}" not found`)
+		sql = `SELECT id FROM users WHERE user = "${username}";`
+		const record = await this.db.get(sql)
+		return record.id
+	}
+
 	async close() {
 		await this.db.close()
 	}

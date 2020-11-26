@@ -1,0 +1,74 @@
+#!/bin/bash
+
+COMMIT_MSG_FILE=$1 # The commit msg file name - first argument
+COMMIT_SOURCE=$2 # The commit source - second argument
+SHA1=$3 # The commit identifier (SHA1) - third argument
+
+##### REFERENCE START - https://stackoverflow.com/a/10015707 ####
+# Allows us to read user input below, assigns stdin to keyboard
+exec < /dev/tty
+##### REFERENCE END - https://stackoverflow.com/a/10015707 ####
+
+#### START - SAMPLE HOOK PROVIDED - ADAPTED ####################
+# With thanks to Sergio Vaccaro <sergio.vaccaro@istat.it>
+
+set -e # using the options command to abort script at first error
+echo
+echo "PREPARE-COMMIT-MSG" # Notify user that the prepare-commit-msg git hook is being executed
+
+# Branch to protect
+PROTECTED_BRANCH="master"
+
+# Remote
+REMOTE=""
+
+# MY LINE
+MERGE_MASTER=true
+
+# Check for merges
+if [[ $2 != 'merge' ]]; then
+    # Not a merge
+    echo "  not a merge"
+    MERGE_MASTER=false # ADAPTED LINE
+fi
+
+# Current branch name
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Check if in PROTECTED_BRANCH
+if [[ "$CURRENT_BRANCH" != "$PROTECTED_BRANCH" ]]; then
+    # Not in PROTECTED_BRANCH: can proceed
+    echo "  not in the ${PROTECTED_BRANCH} branch"
+    MERGE_MASTER=false # ADAPTED LINE
+fi
+
+if [[ $MERGE_MASTER == true ]]; then # ADAPTED LINE
+  echo "  you are trying to merge into the ${PROTECTED_BRANCH} branch"
+  echo "  merging branches to master must be done by creating a pull request"
+  echo "  this merge has been cancelled however you will need to"
+  echo "  reset the operation before continuing by running git reset --merge"
+  echo
+  ##### START - MY ADAPTATION ########################
+  read -p "Do you want to reset the operation now? (y/n)" OPTION
+  if [ "$OPTION" == "y" ]; then
+    git reset --merge
+    echo "Merge has been reset"
+  fi
+  ##### END - MY ADAPTATION ########################
+  exit 1
+fi
+
+#### END - SAMPLE HOOK PROVIDED ####################
+
+# MY BASH ###
+# Ask the user for the 3 sections of commit message
+# Summary of commit, Why where these changes made, What changes where made
+read -p "Summary of commit: " SUMMARY # Saves users response in SUMMARY variable
+read -p "Why are these changes being made: " WHY # Saves users response in WHY variable
+read -p "Details of the changes: " WHAT # Saves users response in WHAT variable
+
+echo "$SUMMARY" > "$COMMIT_MSG_FILE" # write summary to commit message file
+echo "" >> "$COMMIT_MSG_FILE" # append new empty line - to allow 'git log --oneline' clean look (lines below first line will be hidden)
+echo "$WHY" >> "$COMMIT_MSG_FILE" # append why
+echo "" >> "$COMMIT_MSG_FILE" # append new empty line - to allow 'git log --oneline' clean look
+echo "$WHAT" >> "$COMMIT_MSG_FILE" # append what
