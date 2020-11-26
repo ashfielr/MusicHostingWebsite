@@ -148,7 +148,7 @@ input[type="file"] {
 	display: none;
 }
 
-input[type="submit"], header > a, .custom-file-upload {
+input[type="submit"], header > a, .custom-file-upload, .stdBTN{
   background-color: grey;
   border: 2px solid grey;
   color: white;
@@ -160,7 +160,7 @@ input[type="submit"], header > a, .custom-file-upload {
 	/* border-radius: 0.6vw; */
 }
 
-input[type="submit"]:hover, header > a:hover, .custom-file-upload:hover {
+input[type="submit"]:hover, header > a:hover, .custom-file-upload:hover, .stdBTN:hover{
   color: grey;
   background-color: white;
 }
@@ -299,6 +299,18 @@ td:last-child {
   white-space: nowrap;
 }
 
+/* === Upload === */
+.uploadBtn {
+  display: inline-grid;
+  grid-column: 2;
+  margin-left: 5vw;
+}
+
+.uploadHeader {
+  display: inline-grid;
+  grid-column: 1;
+}
+
 @media (max-device-width: 599px) {
   main {
     width: 95%;
@@ -306,7 +318,7 @@ td:last-child {
     margin-right: auto;*/
   }
   
-  body > header > a {
+  body > header > a, .stdBTN {
     margin-top: 4vw;
     font-size: 5vw;
   }
@@ -344,7 +356,7 @@ td:last-child {
     width: 90%;
   }
   
-  body > header > a {
+  body > header > a, .stdBTN {
     margin-top: 3vw;
     font-size: 3vw;
   }
