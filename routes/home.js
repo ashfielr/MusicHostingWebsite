@@ -15,12 +15,17 @@ async function checkAuth(ctx, next) {
 
 router.use(checkAuth)
 
+/**
+ * The secure home page.
+ *
+ * @name Home Page
+ * @route {GET} /
+ */
 router.get('/', async ctx => {
 	const track = await new Tracks(dbName)
 	try {
 		const userTracks = await track.getTracks(ctx.session.userID) // Array of user's tracks
 		console.log(`User's tracks: ${userTracks}`)
-		ctx.hbs.userID = ctx.session.userID
 		ctx.hbs.userTracks = userTracks
 		await ctx.render('home', ctx.hbs)
 	} catch(err) {

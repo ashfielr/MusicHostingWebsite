@@ -16,6 +16,7 @@ async function getHandlebarData(ctx, next) {
 	console.log(`${ctx.method} ${ctx.path}`)
 	ctx.hbs = {
 		authorised: ctx.session.authorised,
+		userID: ctx.session.userID,
 		host: `https://${ctx.host}`
 	}
 	for(const key in ctx.query) ctx.hbs[key] = ctx.query[key]
