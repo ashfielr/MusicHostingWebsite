@@ -148,7 +148,11 @@ input[type="file"] {
 	display: none;
 }
 
-input[type="submit"], header > a, .custom-file-upload, .stdBTN{
+input[type="submit"] {
+	display: none;
+}
+
+header > a, .custom-file-upload, .stdBTN{
   background-color: grey;
   border: 2px solid grey;
   color: white;
