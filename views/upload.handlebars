@@ -8,7 +8,7 @@
 		<meta name="description" content="The secure upload page">
 		<meta name="author" content="Robert Ashfield">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
-		<script type="module" src="main.js"></script>
+		<script type="module" src="upload.js"></script>
 	</head>
 	<body>
 		<header>
@@ -23,14 +23,40 @@
 		{{/if}}
 		<main>
       <section>
-        <h2 class="uploadHeader">Select your tracks to upload</h2>
+        <h2>Select Tracks To Upload</h2>
         <form method="post" action="/upload" enctype="multipart/form-data">
-          <label for="tracksInput" class="stdBTN">Choose your tracks</label>
-          <input type="file" id="tracksInput" name="tracksInput" accept="audio/mpeg"/>
+          <label for="tracksInput" class="trackInputLBL stdBTN">Choose your tracks</label>
+          <input type="file" id="tracksInput" name="tracksInput" accept="audio/mpeg" multiple/>
           <label for="submitTracks" class="stdBTN">Upload selected tracks</label>
           <input type="submit" id="submitTracks"/>
         </form>
-        <p>You have no selected tracks to upload.</p>
+        <p class="tracksSelectedInfo">You have no selected tracks to upload.</p>
+      </section>
+      
+      <section>
+        <h2 class="uploadHeader">Uploaded Tracks</h2>
+        {{#if userTracks}}
+          {{#each userTracks}}
+          <section class="track-container">
+            <figure class="albumImageContainer">
+            {{#if this.albumArt}}
+              <img class="albumImage" src="{{host}}/tracks/albumArt/{{this.albumArt}}" alt="Album art">
+            {{else}}
+              <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
+            {{/if}}
+            </figure>
+            <figcaption class="track-content">
+              <p class="trackName noWrap noMargin bold">{{this.trackName}}</p>
+              <p class="artist noWrap noMargin">{{this.artist}}</p>
+            </figcaption>
+            <figcaption>
+              <p class="duration noWrap noMargin">{{this.duration}}</p>
+            </figcaption>
+          </section>
+          {{/each}}
+        {{else}}
+          <p>You have no uploaded tracks.</p>
+        {{/if}}
       </section>
 		</main>
 	</body>
