@@ -18,7 +18,7 @@ router.use(checkAuth)
  * The secure upload page.
  *
  * @name Upload Page
- * @route {GET} /upload
+ * @route {GET} /
  */
 router.get('/', async ctx => {
 	const track = await new Tracks(dbName)
@@ -31,6 +31,17 @@ router.get('/', async ctx => {
 		ctx.hbs.error = err.message
 		await ctx.render('error', ctx.hbs)
 	}
+})
+
+/**
+ * The script to process uploading tracks.
+ *
+ * @name Upload Script
+ * @route {POST} /
+ */
+router.post('/', async ctx => {
+	console.log(ctx.request.files)
+	ctx.redirect('/upload')
 })
 
 export default router

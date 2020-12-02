@@ -26,10 +26,10 @@ class Tracks {
             trackID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             userID INTEGER NOT NULL,\
             trackFile TEXT NOT NULL,\
-            trackName TEXT,\
-            artist TEXT,\
-            albumArt TEXT,\
-            duration INTEGER,\
+            trackName TEXT NOT NULL,\
+            artist TEXT NOT NULL,\
+            albumArt TEXT NOT NULL,\
+            duration TEXT NOT NULL,\
             FOREIGN KEY(userID) REFERENCES users(id));'
 			await this.db.run(sql)
 			return this
@@ -37,7 +37,7 @@ class Tracks {
 	}
 
 	/**
-	 * Registers a new user
+	 * Registers a new user - used for testing the module
 	 * @param {String} user The chosen username
 	 * @param {String} pass The chosen password
 	 * @param {String} email The chosen email
@@ -63,16 +63,22 @@ class Tracks {
 	 * Adds a new track
 	 * @param {Number} userID The user who is uploading the file
 	 * @param {String} trackFile The filename and extension of track
+	 * @param {String} trackName The name of the track
+	 * @param {String} artist The artist for the track
+	 * @param {String} albumArt The filename of the album art image
+	 * @param {String} duration The duration of the track in MM:SS
 	 * @returns {Boolean} Returns true if the new track has been added
 	 */
-	async addTrack(userID, trackFile) {
-		Array.from(arguments).forEach( val => {
-			if(val.length === 0) throw new Error('missing field')
-		})
-		let sql = `SELECT COUNT(*) as records FROM tracks WHERE trackFile="${trackFile}";`
+	async addTrack(trackObj) {
+		for(const attribute in trackObj) {
+			if(trackObj[attribute] === undefined) throw new Error(`${attribute} is undefined`)
+		}
+		let sql = `SELECT COUNT(*) as records FROM tracks WHERE trackFile="${trackObj.trackFile}";`
 		const trackFiles = await this.db.get(sql)
-		if(trackFiles.records !== 0) throw new Error(`track file name "${trackFile}" is already in use`)
-		sql = `INSERT INTO tracks(userID, trackFile) VALUES("${userID}", "${trackFile}")`
+		if(trackFiles.records !== 0) throw new Error(`track file name "${trackObj.trackFile}" is already in use`)
+		sql = `INSERT INTO tracks(userID, trackFile, trackName, artist, albumArt, duration)\
+            VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
+            "${trackObj.artist}", "${trackObj.albumArt}", "${trackObj.duration}")`
 		await this.db.run(sql)
 		return true
 	}
