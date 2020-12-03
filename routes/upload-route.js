@@ -40,8 +40,25 @@ router.get('/', async ctx => {
  * @route {POST} /
  */
 router.post('/', async ctx => {
-	console.log(ctx.request.files)
-	ctx.redirect('/upload')
+	const track = await new Tracks(dbName)
+	//console.log(ctx.request.files)
+	console.log(ctx.request.files.tracksInput)
+
+	const tracksInput = ctx.request.files.tracksInput // The files uploaded via form
+	if(Array.isArray(tracksInput)) { // More than one track uploaded
+		// Loop over track files and add them to database
+		let i=0
+		while(i < tracksInput.length) {
+			await track.addTrackFromFile(ctx.session.userID, tracksInput[i].path)
+			i++
+		}
+		console.log('>1')
+	} else { // Only one track uploaded
+		// Add single track file to database
+		await track.addTrackFromFile(ctx.session.userID, tracksInput.path)
+		console.log('1')
+	}
+	ctx.redirect('/upload') // Reload the page to show tracks
 })
 
 export default router
