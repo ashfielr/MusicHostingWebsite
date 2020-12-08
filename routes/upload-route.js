@@ -2,6 +2,7 @@
 import Router from 'koa-router'
 
 const router = new Router({ prefix: '/upload' })
+import TrackUploader from '../modules/trackUploader.js'
 import Tracks from '../modules/tracks.js'
 const dbName = 'website.db'
 
@@ -40,25 +41,25 @@ router.get('/', async ctx => {
  * @route {POST} /
  */
 router.post('/', async ctx => {
-	const track = await new Tracks(dbName)
-	//console.log(ctx.request.files)
-	console.log(ctx.request.files.tracksInput)
+	const trackUploader = await new TrackUploader(dbName)
+	let message = 'Track(s) uploaded successfully'
 
 	const tracksInput = ctx.request.files.tracksInput // The files uploaded via form
+
 	if(Array.isArray(tracksInput)) { // More than one track uploaded
-		// Loop over track files and add them to database
-		let i=0
+		let retVal
+		let i=0 // Loop over track files and add them to database
 		while(i < tracksInput.length) {
-			await track.addTrackFromFile(ctx.session.userID, tracksInput[i].path)
+			retVal = await trackUploader.addTrackFromFile(ctx.session.userID, tracksInput[i].path, 'public/tracks')
+			if(retVal !== true) message = 'A file was missing ID3 data. Check which file(s) didn\'t upload.'
 			i++
 		}
-		console.log('>1')
 	} else { // Only one track uploaded
 		// Add single track file to database
-		await track.addTrackFromFile(ctx.session.userID, tracksInput.path)
-		console.log('1')
+		const retValue = await trackUploader.addTrackFromFile(ctx.session.userID, tracksInput.path, 'public/tracks')
+		if(retValue !== true) message = 'The file was missing ID3 data and was not uploaded.'
 	}
-	ctx.redirect('/upload') // Reload the page to show tracks
+	ctx.redirect(`/upload?msg=${message}`) // Reload the page to show tracks
 })
 
 export default router

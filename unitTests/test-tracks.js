@@ -138,7 +138,7 @@ test('ADD TRACK : error if artist undefined', async test => {
 	}
 })
 
-test('ADD TRACK : error if albumArt undefined', async test => {
+test('ADD TRACK : albumArt undefined for track upload - added as NULL in DB', async test => {
 	/* Arrange */
 	test.plan(1)
 	const tracks = test.context.tracks
@@ -148,11 +148,13 @@ test('ADD TRACK : error if albumArt undefined', async test => {
 	try {
 		/* Act */
 		await tracks.addTrack(trackObj)
+		const userTracks = await tracks.getTracks(1)
 
 		/* Assert */
-		test.fail('error not thrown')
+		test.is(userTracks[0].albumArt,null,'albumArt was not added as NULL')
+
 	} catch(err) {
-		test.is(err.message, 'albumArt is undefined', 'incorrect error message')
+		test.fail(`error was thrown: ${err}`)
 	} finally {
 		tracks.close()
 	}

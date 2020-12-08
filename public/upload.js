@@ -6,7 +6,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	/* Show message for time period */
 	if(document.querySelector('.msg')) {
-		const msgDisplayTime = 1500
+		const msgDisplayTime = 4000 // Longer delay - long error messages
 		document.querySelector('.msg').hidden = false
 		window.setTimeout( () => {
 			document.querySelector('.msg').hidden = true

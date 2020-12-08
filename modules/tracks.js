@@ -3,8 +3,6 @@
 
 import bcrypt from 'bcrypt-promise'
 import sqlite from 'sqlite-async'
-import musicMetaData from 'music-metadata'
-import fs from 'fs-extra'
 
 const saltRounds = 10
 
@@ -62,30 +60,6 @@ class Tracks {
 	}
 
 	/**
-	 * Adds a new track
-	 * @param {Number} userID The user who is uploading the file
-	 * @param {String} trackFile The filename and extension of track
-	 * @param {String} trackName The name of the track
-	 * @param {String} artist The artist for the track
-	 * @param {String} albumArt The filename of the album art image
-	 * @param {String} duration The duration of the track in MM:SS
-	 * @returns {Boolean} Returns true if the new track has been added
-	 */
-	async addTrack(trackObj) {
-		for(const attribute in trackObj) {
-			if(trackObj[attribute] === undefined) throw new Error(`${attribute} is undefined`)
-		}
-		let sql = `SELECT COUNT(*) as records FROM tracks WHERE trackFile="${trackObj.trackFile}";`
-		const trackFiles = await this.db.get(sql)
-		if(trackFiles.records !== 0) throw new Error(`track file name "${trackObj.trackFile}" is already in use`)
-		sql = `INSERT INTO tracks(userID, trackFile, trackName, artist, albumArt, duration)\
-            VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
-            "${trackObj.artist}", "${trackObj.albumArt}", "${trackObj.duration}")`
-		await this.db.run(sql)
-		return true
-	}
-
-	/**
 	 * Gets all of the tracks The user has uploaded
 	 * @param {Number} userID The user to get the tracks for
 	 * @returns {Object} Returns the tracks the user has uploaded - returns null if user has no tracks.
@@ -103,95 +77,56 @@ class Tracks {
 	}
 
 	/**
-	 * Creates a unique filename for the track to store
-	 * @param {String} tempFilePath The temporary file path of the track to store
-	 * @returns {String} Returns filename of the track which has been stored
+	 * Adds a new track
+	 * @param {Number} userID The user who is uploading the file
+	 * @param {Object} trackObj Object containing all data about the track
+	 * @returns {Boolean} Returns true if the new track has been added
 	 */
-	async saveMP3File(tempFilePath) {
-		const fileName = `${Date.now()}.mp3` // Unique file name - seconds from 00:00:00 UTC Jan 1 1970
-		console.log(fileName)
-		await fs.copy(tempFilePath, `public/tracks/${fileName}`)
-		console.log(`Track mp3 file saved: ${fileName}`)
-		return fileName
-	}
-
-	/**
-	 * Stores an image from the buffer provided
-	 * @param {Object} buffer The buffer for the image to store
-	 * @returns {String} The name of the jpg file that was stored
-	 */
-	async saveAlbumArt(buffer) {
-		console.log(typeof buffer)
-		// REFERENCE - https://nodejs.org/api/fs.html#fs_fs_writefile_file_data_options_callback
-		const fileName = `${Date.now()}.jpg` // Unique file name - seconds from 00:00:00 UTC Jan 1 1970
-		const filePath = `public/tracks/albumArt/${fileName}`
-		fs.writeFile(filePath, buffer, (err) => {
-			if (err) throw err
-			console.log(`Album art saved: ${fileName}`)
-		})
-		return fileName
-	}
-
-	/**
-	 * Extracts the ID3 metadata from the mp3 file
-	 * @param {String} filePath The file path of the mp3 file from which to extract the data
-	 * @returns {Object} Returns the metadata for the mp3 file
-	 */
-	async extractMP3Data(filePath) {
-		return await musicMetaData.parseFile(filePath)
-	}
-
-	/**
-	 * Gets the display duration string for a given durations in seconds
-	 * @param {Number} duration The duration to convert to a string format
-	 * @returns {String} Returns string formated duration
-	 */
-	async getDisplayDurationString(duration) {
-		const secInMin = 60
-		const ten = 10
-		const minutes = Math.floor(duration/secInMin)
-		const seconds = Math.floor(duration%secInMin)
-		if (seconds < ten) {
-			return `${minutes}:0${seconds}` // Add zero before seconds
+	async addTrack(trackObj) {
+		await this.throwErrIfMissingData(trackObj) // Check if missing any data
+		let sql = `SELECT COUNT(*) as records FROM tracks WHERE trackFile="${trackObj.trackFile}";`
+		const trackFiles = await this.db.get(sql)
+		if(trackFiles.records !== 0) throw new Error(`track file name "${trackObj.trackFile}" is already in use`)
+		// Run the correct insert statement depending on if albumArt is undefined or not
+		if(trackObj.albumArt) {
+			sql = await this.SQLToInsertIntoDB(trackObj)
 		} else {
-			return `${minutes}:${seconds}`
+			sql = await this.SQLToInsertIntoDBWithoutAlbumArt(trackObj)
+		}
+		await this.db.run(sql)
+		return true
+	}
+
+	/**
+	 * Throws an error if the track is missing data
+	 * @param {Object} trackObj Object containing all data about the track
+	 */
+	async throwErrIfMissingData(trackObj) {
+		for(const attribute in trackObj) {
+			if(trackObj[attribute] === undefined && attribute!=='albumArt') throw new Error(`${attribute} is undefined`)
 		}
 	}
 
 	/**
-	 * Adds the track with all its details to the database
-	 * @param {Number} userID The userID value for the user who is uploading the track
-	 * @param {String} tempFilePath The temporary file path of the uploaded track
-	 * @returns {Boolean} Returns true if sucessful
+	 * Generates SQL statement to add a track to the database
+	 * @param {Object} trackObj Object containing all data about the track
+	 * @returns {Boolean} Returns the SQL statement required to add the track to database
 	 */
-	async addTrackFromFile(userID, tempFilePath) {
-		// Save mp3 file
-		const fileName = await this.saveMP3File(tempFilePath)
+	async SQLToInsertIntoDB(trackObj) {
+		return `INSERT INTO tracks(userID, trackFile, trackName, artist, albumArt, duration)\
+            VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
+            "${trackObj.artist}", "${trackObj.albumArt}", "${trackObj.duration}")`
+	}
 
-		// Get meta data
-		const metaData = await this.extractMP3Data(`public/tracks/${fileName}`)
-		const com = metaData.common
-
-		// Save album art
-		let albumArtFileName
-		try {
-			// Save the album image if there is one
-			const imageBuffer = com.picture[0].data
-			albumArtFileName = await this.saveAlbumArt(imageBuffer)
-		} catch (err) {
-			// No album image found
-			albumArtFileName = null // Will use placeholder image
-		}
-
-		// Format duration
-		const duration = await this.getDisplayDurationString(metaData.format.duration)
-
-		// Create object to pass the track data
-		const trackDataObj = { userID: userID, trackFile: fileName, trackName: com.title,
-			artist: com.artist, albumArt: albumArtFileName, duration: duration}
-		console.log(trackDataObj)
-
-		return await this.addTrack(trackDataObj) // Add the track data to database
+	/**
+   * Generates SQL statement to add a track which has no album art to the database
+   * @param {Object} trackObj Object containing all data about the track
+   * @returns {Boolean} Returns the SQL statement required to add the track to database
+   */
+	async SQLToInsertIntoDBWithoutAlbumArt(trackObj) {
+		return `INSERT INTO tracks(userID, trackFile, trackName, artist, duration)\
+            VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
+            "${trackObj.artist}", "${trackObj.duration}")`
 	}
 
 	/**
