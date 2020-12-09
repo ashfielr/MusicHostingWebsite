@@ -8,11 +8,11 @@
 		<meta name="description" content="The secure track page">
 		<meta name="author" content="Robert Ashfield">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
-		<script type="module" src="main.js"></script>
+		<script type="module" src="{{host}}/main.js"></script>
 	</head>
 	<body>
 		<header>
-		  <h1>{{trackName}}</h1>
+		  <h1>Track Info</h1>
 		  <a href="/logout">Log out</a>
       <a href="/home">Home</a>
 		</header>
@@ -22,7 +22,28 @@
       </aside>
 		{{/if}}
 		<main>
-      
+      <section>
+        <section class="track-container">
+          <figure class="albumImageContainer">
+          {{#if track.albumArt}}
+            <img class="albumImage" src="{{host}}/tracks/albumArt/{{track.albumArt}}" alt="Album art">
+          {{else}}
+            <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
+          {{/if}}
+          </figure>
+          <figcaption class="track-content">
+            <p class="trackName noWrap noMargin bold">{{track.trackName}}</p>
+            <p class="artist noWrap noMargin">{{track.artist}}</p>
+          </figcaption>
+          <figcaption>
+            <p class="duration noWrap noMargin">{{track.duration}}</p>
+          </figcaption>
+        </section>
+      </section> 
+      <section>
+        <h2>ID3 Data</h2>
+        <p>ID3 Data goes here</p>
+      </section>
 		</main>
 	</body>
 </html>
