@@ -37,4 +37,24 @@ router.get('/', async ctx => {
 	}
 })
 
+/**
+ * A page for a track.
+ *
+ * @name Track Page
+ * @route {GET} /track/:trackID
+ */
+router.get('/track/:trackID', async ctx => {
+	const track = await new Tracks(dbName)
+	try {
+		console.log(ctx.params.trackID) // the ID of the track to display details for
+		await ctx.render('track', ctx.hbs)
+	} catch(err) {
+		console.log(err.message)
+		ctx.hbs.error = err.message
+		await ctx.render('error', ctx.hbs)
+	} finally{
+		track.close()
+	}
+})
+
 export default router
