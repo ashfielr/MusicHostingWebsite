@@ -77,6 +77,19 @@ class Tracks {
 	}
 
 	/**
+	 * Gets a track from the database
+	 * @param {Number} trackID The trackID of the track to retrieve from the database
+	 * @returns {Object} Returns the track for the given trackID - returns null if it does not exist.
+	 */
+	async getTrack(trackID) {
+		/* Check if user exists with userID */
+		const sql = `SELECT * FROM tracks WHERE trackID="${trackID}";`
+		const track = await this.db.get(sql)
+		if(track) return track
+		return null
+	}
+
+	/**
 	 * Adds a new track
 	 * @param {Number} userID The user who is uploading the file
 	 * @param {Object} trackObj Object containing all data about the track

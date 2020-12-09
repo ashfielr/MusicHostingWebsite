@@ -240,3 +240,42 @@ test('GET TRACKS : returns null if user has no uploaded tracks', async test => {
 		tracks.close()
 	}
 })
+
+test('GET TRACK : returns the track for a given trackID', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	const trackObj = test.context.trackObj
+	try {
+		/* Act */
+		await tracks.addTrack(trackObj)
+		const track = await tracks.getTrack(1)
+
+		/* Assert */
+		test.is(track.trackID, 1, 'did not return the specified track')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
+
+test('GET TRACK : returns null when the trackID does not exist', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	const trackObj = test.context.trackObj
+	try {
+		/* Act */
+		await tracks.addTrack(trackObj)
+		const track = await tracks.getTrack(2)
+		// only one track was added so trackID of 2 does not exist in table
+
+		/* Assert */
+		test.is(track, null, 'did not return null')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
