@@ -15,19 +15,18 @@ test.beforeEach(async t => {
 	t.context.trackUploader = await new TrackUploader()
 	await t.context.trackUploader.tracks.registerUser('doej', 'password', 'doej@gmail.com')
 
-	// mock fs - so no files are written to real fs
 	mockFS({
 		// Location of test tracks
 		'testDir/tracks': mockFS.load('unitTests/testAssets/tracks'),
 		'node_modules/musicmetadata': mockFS.load('node_modules/musicmetadata'),
 		'savedFiles': {/** empty directory */}
 	}, {lazy: false})
-	await delay(15)
+	await delay(100)
 })
 
 /* This runs after each test */
 test.afterEach(async() => {
-	await delay(50)
+	await delay(100)
 	mockFS.restore() // revert back to real file system to remove mock fs from previous test
 })
 
