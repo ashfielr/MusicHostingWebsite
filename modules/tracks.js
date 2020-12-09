@@ -26,10 +26,10 @@ class Tracks {
             trackID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             userID INTEGER NOT NULL,\
             trackFile TEXT NOT NULL,\
-            trackName TEXT,\
-            artist TEXT,\
+            trackName TEXT NOT NULL,\
+            artist TEXT NOT NULL,\
             albumArt TEXT,\
-            duration INTEGER,\
+            duration TEXT NOT NULL,\
             FOREIGN KEY(userID) REFERENCES users(id));'
 			await this.db.run(sql)
 			return this
@@ -37,7 +37,7 @@ class Tracks {
 	}
 
 	/**
-	 * Registers a new user
+	 * Registers a new user - used for testing the module
 	 * @param {String} user The chosen username
 	 * @param {String} pass The chosen password
 	 * @param {String} email The chosen email
@@ -60,24 +60,6 @@ class Tracks {
 	}
 
 	/**
-	 * Adds a new track
-	 * @param {Number} userID The user who is uploading the file
-	 * @param {String} trackFile The filename and extension of track
-	 * @returns {Boolean} Returns true if the new track has been added
-	 */
-	async addTrack(userID, trackFile) {
-		Array.from(arguments).forEach( val => {
-			if(val.length === 0) throw new Error('missing field')
-		})
-		let sql = `SELECT COUNT(*) as records FROM tracks WHERE trackFile="${trackFile}";`
-		const trackFiles = await this.db.get(sql)
-		if(trackFiles.records !== 0) throw new Error(`track file name "${trackFile}" is already in use`)
-		sql = `INSERT INTO tracks(userID, trackFile) VALUES("${userID}", "${trackFile}")`
-		await this.db.run(sql)
-		return true
-	}
-
-	/**
 	 * Gets all of the tracks The user has uploaded
 	 * @param {Number} userID The user to get the tracks for
 	 * @returns {Object} Returns the tracks the user has uploaded - returns null if user has no tracks.
@@ -94,6 +76,62 @@ class Tracks {
 		return tracks
 	}
 
+	/**
+	 * Adds a new track
+	 * @param {Number} userID The user who is uploading the file
+	 * @param {Object} trackObj Object containing all data about the track
+	 * @returns {Boolean} Returns true if the new track has been added
+	 */
+	async addTrack(trackObj) {
+		await this.throwErrIfMissingData(trackObj) // Check if missing any data
+		let sql = `SELECT COUNT(*) as records FROM tracks WHERE trackFile="${trackObj.trackFile}";`
+		const trackFiles = await this.db.get(sql)
+		if(trackFiles.records !== 0) throw new Error(`track file name "${trackObj.trackFile}" is already in use`)
+		// Run the correct insert statement depending on if albumArt is undefined or not
+		if(trackObj.albumArt) {
+			sql = await this.SQLToInsertIntoDB(trackObj)
+		} else {
+			sql = await this.SQLToInsertIntoDBWithoutAlbumArt(trackObj)
+		}
+		await this.db.run(sql)
+		return true
+	}
+
+	/**
+	 * Throws an error if the track is missing data
+	 * @param {Object} trackObj Object containing all data about the track
+	 */
+	async throwErrIfMissingData(trackObj) {
+		for(const attribute in trackObj) {
+			if(trackObj[attribute] === undefined && attribute!=='albumArt') throw new Error(`${attribute} is undefined`)
+		}
+	}
+
+	/**
+	 * Generates SQL statement to add a track to the database
+	 * @param {Object} trackObj Object containing all data about the track
+	 * @returns {Boolean} Returns the SQL statement required to add the track to database
+	 */
+	async SQLToInsertIntoDB(trackObj) {
+		return `INSERT INTO tracks(userID, trackFile, trackName, artist, albumArt, duration)\
+            VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
+            "${trackObj.artist}", "${trackObj.albumArt}", "${trackObj.duration}")`
+	}
+
+	/**
+   * Generates SQL statement to add a track which has no album art to the database
+   * @param {Object} trackObj Object containing all data about the track
+   * @returns {Boolean} Returns the SQL statement required to add the track to database
+   */
+	async SQLToInsertIntoDBWithoutAlbumArt(trackObj) {
+		return `INSERT INTO tracks(userID, trackFile, trackName, artist, duration)\
+            VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
+            "${trackObj.artist}", "${trackObj.duration}")`
+	}
+
+	/**
+	 * Closes the database connection
+	 */
 	async close() {
 		await this.db.close()
 	}

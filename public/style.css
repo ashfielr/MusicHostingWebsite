@@ -33,10 +33,10 @@ h1, h2, h3 {
 }
 
 h1 {
-	padding: 2.6vw;
-	float: left;
-	font-size: 3vw;
-	margin-left: 6vw;
+  padding: 2.6vw;
+  float: left;
+  font-size: 3vw;
+  margin-left: 6vw;
 }
 
 h2 {
@@ -53,7 +53,7 @@ h3 {
 
 body > header > a {
 	margin-top: 3vw;
-	margin-right: 3vw;
+	margin-right: 1vw;
 	float: right;
 	font-size: 1.3vw;
 }
@@ -148,7 +148,11 @@ input[type="file"] {
 	display: none;
 }
 
-input[type="submit"], header > a, .custom-file-upload {
+input[type="submit"] {
+	display: none;
+}
+
+header > a, .stdBTN{
   background-color: grey;
   border: 2px solid grey;
   color: white;
@@ -160,7 +164,7 @@ input[type="submit"], header > a, .custom-file-upload {
 	/* border-radius: 0.6vw; */
 }
 
-input[type="submit"]:hover, header > a:hover, .custom-file-upload:hover {
+header > a:hover, .stdBTN:hover{
   color: grey;
   background-color: white;
 }
@@ -299,14 +303,28 @@ td:last-child {
   white-space: nowrap;
 }
 
-@media (max-device-width: 599px) {
+/* === Upload === */
+.uploadBtn {
+  display: inline-grid;
+  grid-column: 2;
+  margin-left: 5vw;
+}
+
+.uploadHeader {
+  display: inline-grid;
+  grid-column: 1;
+}
+
+
+
+@media screen and (max-device-width: 599px) {
   main {
     width: 95%;
     /*margin-left: auto;
     margin-right: auto;*/
   }
   
-  body > header > a {
+  body > header > a, .stdBTN {
     margin-top: 4vw;
     font-size: 5vw;
   }
@@ -316,6 +334,7 @@ td:last-child {
   }
   
   header > h1 {
+    margin-left: 1vw;
     padding-top: 4vw;
     line-height: 7.5vw;
   }
@@ -336,15 +355,20 @@ td:last-child {
   p {
     font-size: 5vw;
   }
+  
+  input[type="text"], input[type="email"], input[type="password"], textarea, select {
+	font-size: 5vw;
+	width: 85vw;
+  }
 
 }
 
-@media (min-device-width: 600px) and (max-device-width: 1024px){ 
+@media screen and (min-device-width: 600px) and (max-device-width: 1024px){ 
   main {
     width: 90%;
   }
   
-  body > header > a {
+  body > header > a, .stdBTN {
     margin-top: 3vw;
     font-size: 3vw;
   }
@@ -372,9 +396,13 @@ td:last-child {
   }
   
   p {
-    font-size: 2vw;
+    font-size: 3vw;
   }
   
+  input[type="text"], input[type="email"], input[type="password"], textarea, select {
+	font-size: 3vw;
+	width: 50vw;
+  }
 }
   
 

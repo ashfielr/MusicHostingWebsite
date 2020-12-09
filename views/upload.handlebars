@@ -5,15 +5,16 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Home Page</title>
-		<meta name="description" content="The secure home page">
+		<meta name="description" content="The secure upload page">
 		<meta name="author" content="Robert Ashfield">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
-		<script type="module" src="main.js"></script>
+		<script type="module" src="upload.js"></script>
 	</head>
 	<body>
 		<header>
-		  <h1>Home Page</h1>
+		  <h1>Upload Tracks</h1>
 		  <a href="/logout">Log out</a>
+      <a href="/home">Home</a>
 		</header>
 		{{#if msg}}
       <aside>
@@ -22,8 +23,18 @@
 		{{/if}}
 		<main>
       <section>
+        <h2>Select Tracks To Upload</h2>
+        <form method="post" action="/upload" enctype="multipart/form-data">
+          <label for="tracksInput" class="trackInputLBL stdBTN">Choose your tracks</label>
+          <input type="file" id="tracksInput" name="tracksInput" accept="audio/mpeg" multiple/>
+          <label for="submitTracks" class="stdBTN">Upload selected tracks</label>
+          <input type="submit" id="submitTracks">
+        </form>
+        <p class="tracksSelectedInfo">You have no selected tracks to upload.</p>
+      </section>
+      
+      <section>
         <h2 class="uploadHeader">Uploaded Tracks</h2>
-        <a href="/upload" class="uploadBtn stdBTN">Upload</a>
         {{#if userTracks}}
           {{#each userTracks}}
           <section class="track-container">

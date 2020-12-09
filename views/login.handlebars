@@ -5,8 +5,8 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Log In</title>
-		<meta name="description" content="form to add new books">
-		<meta name="author" content="Mark Tyers">
+		<meta name="description" content="Form to allow user to login">
+		<meta name="author" content="Robert Ashfield">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
 		<script type="module" src="main.js"></script>
 	</head>
@@ -31,7 +31,10 @@
 				<input type="password" name="pass" placeholder="your password" value="{{body.pass}}">
 			</p>
 			<input type="hidden" name="referrer" value="{{referrer}}">
-			<p><input type="submit" value="Log in"></p>
+			<p>
+        <label for="loginBTN" class="stdBTN">Log in</label>
+        <input type="submit" id="loginBTN">
+      </p>
 		</form>
 		</main>
 	</body>

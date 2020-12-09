@@ -5,8 +5,8 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Create an Account</title>
-		<meta name="description" content="form to add new books">
-		<meta name="author" content="Mark Tyers">
+		<meta name="description" content="Form to allow users to register">
+		<meta name="author" content="Robert Ashfield">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
 		<script type="module" src="main.js"></script>
 	</head>
@@ -34,7 +34,10 @@
 				<label for="email">Email</label><br />
 				<input type="email" name="email" placeholder="a valid email address" value="{{body.email}}">
 			</p>
-			<p><input type="submit" value="Create"></p>
+			<p>
+        <label for="registerBTN" class="stdBTN">Create</label>
+        <input type="submit" id="registerBTN">
+      </p>
 		</form>
 		</main>
 	</body>

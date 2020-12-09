@@ -4,7 +4,7 @@
 	"description": "A simple dynamic website template to be used as the base for various projects",
 	"main": "index.js",
 	"engines": {
-		"node": "12.x"
+		"node": "14.x"
 	},
 	"type": "module",
 	"ava": {
@@ -24,6 +24,7 @@
 	"dependencies": {
 		"bcrypt": "^5.0.0",
 		"bcrypt-promise": "^2.0.0",
+		"fs-extra": "^9.0.1",
 		"handlebars": "^4.7.6",
 		"koa": "^2.13.0",
 		"koa-body": "^4.2.0",
@@ -31,15 +32,18 @@
 		"koa-session": "^6.0.0",
 		"koa-static": "^5.0.0",
 		"koa-views": "^6.3.0",
+		"musicmetadata": "^2.0.5",
 		"save-dev": "0.0.1-security",
 		"sqlite-async": "^1.1.0"
 	},
 	"devDependencies": {
 		"ava": "^3.13.0",
+		"delay": "^4.4.0",
 		"dependency-check": "^4.1.0",
 		"eslint": "^7.11.0",
 		"esm": "^3.2.25",
 		"jsdoc": "^3.6.5",
-		"jsdoc-route-plugin": "^0.1.0"
+		"jsdoc-route-plugin": "^0.1.0",
+		"mock-fs": "^4.13.0"
 	}
 }
