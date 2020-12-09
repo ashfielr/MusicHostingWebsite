@@ -12,7 +12,7 @@
 	</head>
 	<body>
 		<header>
-		  <h1>Upload Your Tracks</h1>
+		  <h1>Upload Tracks</h1>
 		  <a href="/logout">Log out</a>
       <a href="/home">Home</a>
 		</header>
@@ -27,7 +27,8 @@
         <form method="post" action="/upload" enctype="multipart/form-data">
           <label for="tracksInput" class="trackInputLBL stdBTN">Choose your tracks</label>
           <input type="file" id="tracksInput" name="tracksInput" accept="audio/mpeg" multiple/>
-          <input type="submit" id="submitTracks" value="Upload selected tracks">
+          <label for="submitTracks" class="stdBTN">Upload selected tracks</label>
+          <input type="submit" id="submitTracks">
         </form>
         <p class="tracksSelectedInfo">You have no selected tracks to upload.</p>
       </section>
