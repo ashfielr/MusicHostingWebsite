@@ -155,7 +155,7 @@ test('GET TRACK OBJ : saves files and gets track object', async test => {
 		test.is(albumImageExits, true, 'album art not saved')
 		test.is(mp3FileExists, true, 'mp3 file not saved')
 
-		console.log(trackObj)
+		//console.log(trackObj)
 		// Check all attributes are present - trackObj correct
 		for(const key in expectedTObj)
 			test.not(trackObj[key], undefined, `${key} value missing`) // will not throw error if key exists in data
