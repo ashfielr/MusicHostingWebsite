@@ -38,7 +38,7 @@ test('ADD TRACK : add a valid track to registered user', async test => {
 	}
 })
 
-test('ADD TRACK : error if adding duplicated track', async test => {
+test('ADD TRACK : error if adding duplicated track file', async test => {
 	/* Arrange */
 	test.plan(1)
 	const tracks = test.context.tracks

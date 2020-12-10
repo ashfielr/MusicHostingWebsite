@@ -136,7 +136,7 @@ test('GET METADATA : returns metadata', async test => {
 
 test('GET TRACK OBJ : saves files and gets track object', async test => {
 	/* Arrange */
-	test.plan(3)
+	test.plan(13)
 	const tFHandler = await new TFHandler()
 
 	try {
@@ -148,20 +148,17 @@ test('GET TRACK OBJ : saves files and gets track object', async test => {
 		//console.log(await fs.promises.readdir(`${outputFileLocation}/`))
 
 		const expectedTObj = { trackFile: 'not underfined', trackName: 'Whatever It Takes (With Vocals)',
-			artist: 'Liborio Conti', albumArt: 'not undefined', picture: 'picture', duration: '3:26'}
+			artist: 'Liborio Conti', albumArt: 'not undefined', duration: '3:26', albumArtists: ['Jim','Joe'],
+			year: '2000', track: {no: 1, of: 2}, disk: {no: 1, of: 1}, genre: ['Drum & Bass']}
 
 		/* Assert */
 		test.is(albumImageExits, true, 'album art not saved')
 		test.is(mp3FileExists, true, 'mp3 file not saved')
 
+		console.log(trackObj)
 		// Check all attributes are present - trackObj correct
-		for(const key in expectedTObj) {
-			try {
-				trackObj[key] // will not throw error if key exists in data
-			} catch (err) {
-				test.fail(`${key} value missing`)
-			}
-		}
+		for(const key in expectedTObj)
+			test.not(trackObj[key], undefined, `${key} value missing`) // will not throw error if key exists in data
 		test.pass()
 
 	} catch(err) {

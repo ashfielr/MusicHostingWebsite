@@ -87,7 +87,8 @@ class TrackFileHandler {
 
 			// Return object containing required track data
 			trackDataObj = { trackFile: fileName, trackName: metaData.title,
-				artist: metaData.artist[0], duration: duration}
+				artist: metaData.artist[0], duration: duration, albumArtists: metaData.albumartist, year: metaData.year,
+				track: metaData.track, disk: metaData.disk, genre: metaData.genre}
 
 			if(metaData.picture.length > 0) { // If album art exists - save it
 				albumArtFileName = await this.saveAlbumArt(metaData.picture[0].data, outputFileLocation)
