@@ -1,7 +1,19 @@
 
+@font-face {
+  font-family: Titillium;
+  src: url(./fonts/TitilliumWeb-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url(./fonts/OpenSans-Regular.ttf);
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
   margin: 0;
+  background-color: rgb(240, 240, 240);
+  color: rgb(51, 50, 61);
 }
 
 /* formats the red message boxes */
@@ -21,8 +33,8 @@ aside {
 }
 
 header {
-	background-color: #ccc;
-	border-bottom: 5px solid grey;
+	background-color: white;
+	border-bottom: 5px solid #d6d6d6;
 	height: 8vw;
 }
 
@@ -156,7 +168,7 @@ header > a, .stdBTN{
   text-decoration: none;
   display: inline-block;
 	font-size: 1.5vw;
-	/* border-radius: 0.6vw; */
+	border-radius: 0.6vw;
 }
 
 header > a:hover, .stdBTN:hover{
@@ -249,6 +261,7 @@ td:last-child {
 /* === Grid for a track and its info === */
 .track-container {
   display: grid;
+  width: 100%;
   align-items: center;
   justify-items: end;
   grid-template-columns: auto 5fr 1fr;
@@ -257,7 +270,6 @@ td:last-child {
   
   background-color: #FFF;
   padding: 0;
-  padding-right: 2vw;
 }
 
 .track-content > a {
@@ -290,6 +302,7 @@ td:last-child {
   display: inline-grid;
   grid-column: 3;
   justify-self: end;
+  padding-right: 2vw;
 }
 
 .trackName, .artist { 
@@ -360,6 +373,11 @@ td:last-child {
 	width: 85vw;
   }
 
+  /* Ensure track content hidden overflow works on smaller devices */
+  .track-content {
+    width: 600px;
+    grid-template-columns: 600px;
+  }
 }
 
 @media screen and (min-device-width: 600px) and (max-device-width: 1024px){ 

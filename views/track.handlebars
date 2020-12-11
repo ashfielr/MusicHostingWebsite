@@ -38,7 +38,9 @@
           <figcaption>
             <p class="duration noWrap noMargin">{{track.duration}}</p>
           </figcaption>
-          <br />
+          <br />          
+        </section>
+        <section>
           <audio controls>
             <source src="{{host}}/tracks/{{track.trackFile}}" type="audio/mpeg"/>
             Your browser }}does not support the audio tag.
@@ -47,14 +49,47 @@
       </section> 
       <section>
         <h2>ID3 Data</h2>
-        <p class="bold">Title</p><p>{{track.trackName}}</p><br />
-        <p class="bold">Artist</p><p>{{track.artist}}</p><br />
-        <p class="bold">Duration</p><p>{{track.duration}}</p><br />
-        <p class="bold">Album Artists</p><p>{{track.albumArtists}}</p><br />
-        <p class="bold">Year</p><p>{{track.year}}</p><br />
-        <p class="bold">Track</p><p>{{track.track}}</p><br />
-        <p class="bold">Disk</p><p>{{track.disk}}</p><br />
-        <p class="bold">Genre</p><p>{{track.genre}}</p><br />
+        {{#with track}}
+        <p class="bold">Title</p>
+        {{#if trackName}}
+          <p>{{trackName}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Artist</p>
+        {{#if artist}}
+          <p>{{artist}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Duration</p>
+        {{#if duration}}
+          <p>{{duration}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Album Artists</p>
+        {{#if albumArtists}}
+          <p>{{albumArtists}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Year</p>
+        {{#if year}}
+          <p>{{year}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Track</p>
+        {{#if track}}
+          <p>{{track}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Disk</p>
+        {{#if disk}}
+          <p>{{disk}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}
+        
+        <p class="bold">Genre</p>
+        {{#if genre}}
+          <p>{{genre}}</p><br />
+        {{else}}<p>Data missing.</p><br />{{/if}}      
+        {{/with}}
       </section>
 		</main>
 	</body>
