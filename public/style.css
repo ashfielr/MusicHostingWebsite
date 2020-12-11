@@ -95,11 +95,6 @@ main a {
 	text-decoration: underline;
 }
 
-main a:hover {
-	color: red;
-	text-decoration: none;
-}
-
 section {
 	background-color: #DDD;
 	width: auto;
@@ -263,6 +258,10 @@ td:last-child {
   background-color: #FFF;
   padding: 0;
   padding-right: 2vw;
+}
+
+.track-content > a {
+  text-decoration: none;
 }
 
 /* ===== Grid items ===== */
