@@ -32,7 +32,6 @@ class TrackUploader {
 
 		if(trackDataObj) { // If the track has all required data
 			trackDataObj.userID = userID
-
 			try {
 				return await this.tracks.addTrack(trackDataObj) // Return true / Add the track data to database
 			} catch(err) {

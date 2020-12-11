@@ -25,11 +25,10 @@ class Tracks {
 			sql = 'CREATE TABLE IF NOT EXISTS tracks(\
             trackID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\
             userID INTEGER NOT NULL,\
-            trackFile TEXT NOT NULL,\
-            trackName TEXT NOT NULL,\
-            artist TEXT NOT NULL,\
-            albumArt TEXT,\
-            duration TEXT NOT NULL,\
+            trackFile TEXT NOT NULL, trackName TEXT NOT NULL,\
+            artist TEXT NOT NULL, albumArt TEXT,\
+            duration TEXT NOT NULL, albumArtists TEXT,\
+            year TEXT, track TEXT, disk TEXT, genre TEXT,\
             FOREIGN KEY(userID) REFERENCES users(id));'
 			await this.db.run(sql)
 			return this
@@ -77,6 +76,19 @@ class Tracks {
 	}
 
 	/**
+	 * Gets a track from the database
+	 * @param {Number} trackID The trackID of the track to retrieve from the database
+	 * @returns {Object} Returns the track for the given trackID - returns null if it does not exist.
+	 */
+	async getTrack(trackID) {
+		/* Check if user exists with userID */
+		const sql = `SELECT * FROM tracks WHERE trackID="${trackID}";`
+		const track = await this.db.get(sql)
+		if(track) return track
+		return null
+	}
+
+	/**
 	 * Adds a new track
 	 * @param {Number} userID The user who is uploading the file
 	 * @param {Object} trackObj Object containing all data about the track
@@ -93,7 +105,8 @@ class Tracks {
 		} else {
 			sql = await this.SQLToInsertIntoDBWithoutAlbumArt(trackObj)
 		}
-		await this.db.run(sql)
+		const trackID = (await this.db.run(sql)).lastID
+		await this.insertExtraData(trackObj, trackID)
 		return true
 	}
 
@@ -102,7 +115,8 @@ class Tracks {
 	 * @param {Object} trackObj Object containing all data about the track
 	 */
 	async throwErrIfMissingData(trackObj) {
-		for(const attribute in trackObj) {
+		const requiredKeys = ['userID','trackFile','trackName','artist','duration']
+		for(const attribute of requiredKeys) {
 			if(trackObj[attribute] === undefined && attribute!=='albumArt') throw new Error(`${attribute} is undefined`)
 		}
 	}
@@ -127,6 +141,80 @@ class Tracks {
 		return `INSERT INTO tracks(userID, trackFile, trackName, artist, duration)\
             VALUES("${trackObj.userID}", "${trackObj.trackFile}", "${trackObj.trackName}",\
             "${trackObj.artist}", "${trackObj.duration}")`
+	}
+
+	/**
+   * Generates and executes SQL statements to add the extra ID3 data if it is present
+   * @param {Object} trackObj Object containing all data about the track
+   * @param {Number} trackID the id of the track to which the extra data needs to be added
+   */
+	async insertExtraData(trackObj, trackID) {
+		const {albumArtists,year,track,disk,genre} = trackObj
+		let sql
+
+		if(year !== null) {
+			sql = `UPDATE tracks SET year="${year}" WHERE trackID=${trackID};`
+			await this.db.run(sql)
+		}
+		if(albumArtists !== null) {
+			const albumArtistsText = await this.getArrayAsText(albumArtists)
+			sql = `UPDATE tracks SET albumArtists="${albumArtistsText}" WHERE trackID=${trackID};`
+			await this.db.run(sql)
+		}
+		if(genre !== null) {
+			sql =`UPDATE tracks SET genre="${genre[0]}" WHERE trackID=${trackID};`
+			await this.db.run(sql)
+		}
+		await this.insertDiskAndTrack(disk, track, trackID)
+	}
+
+	/**
+   * Generates and executes SQL statements to add the track and disk data if it is present
+   * @param {Object} disk Object containing all data about the disc
+   * @param {Object} track Object containing all data about the track in the album
+   * @param {Number} trackID the id of the track to which the extra data needs to be added
+   */
+	async insertDiskAndTrack(disk, track, trackID) {
+		let sql
+		if(disk !== null) {
+			const diskText = await this.getNoOfAsText(disk)
+			sql = `UPDATE tracks SET disk="${diskText}" WHERE trackID=${trackID};`
+			await this.db.run(sql)
+		}
+		if(track !== null) {
+			const trackText = await this.getNoOfAsText(track)
+			sql =`UPDATE tracks SET track="${trackText}" WHERE trackID=${trackID};`
+			await this.db.run(sql)
+		}
+	}
+
+	/**
+   * Creates a single string to be used to store an array as text
+   * Example: ['Henry','Joe'] will be converted to 'Henry, Joe'
+   * @param {Object} albumArtists Array containing all the album artists
+   * @returns {Boolean} Returns the formatted string containing all the album artists
+   */
+	async getArrayAsText(albumArtists) {
+		let text = ''
+		for(let i=0; i<albumArtists.length; i++) {
+			text += `${albumArtists[i]}`
+			if(i !== albumArtists.length - 1) text += ', '
+		}
+		return text
+	}
+
+	/**
+   * Creates a single string to be used to store track and disk.
+   * Example: {no:1,of:2} will be converted to '1/2'
+   * @param {Object} objToFormat Object containing to be formatted as a string
+   * @returns {Boolean} Returns the formatted string
+   */
+	async getNoOfAsText(objToFormat) {
+		let text = ''
+		text += objToFormat.no
+		text += '/'
+		text += objToFormat.of
+		return text
 	}
 
 	/**

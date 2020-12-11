@@ -1,0 +1,61 @@
+
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Home Page</title>
+		<meta name="description" content="The secure track page">
+		<meta name="author" content="Robert Ashfield">
+		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
+		<script type="module" src="{{host}}/main.js"></script>
+	</head>
+	<body>
+		<header>
+		  <h1>Track Info</h1>
+		  <a href="/logout">Log out</a>
+      <a href="/home">Home</a>
+		</header>
+		{{#if msg}}
+      <aside>
+				<p class="msg">{{msg}}</p>
+      </aside>
+		{{/if}}
+		<main>
+      <section>
+        <section class="track-container">
+          <figure class="albumImageContainer">
+          {{#if track.albumArt}}
+            <img class="albumImage" src="{{host}}/tracks/albumArt/{{track.albumArt}}" alt="Album art">
+          {{else}}
+            <img class="albumImage" src="{{host}}/tracks/albumArt/placeholderAlbum.jpg" alt="Album art">
+          {{/if}}
+          </figure>
+          <figcaption class="track-content">
+            <p class="trackName noWrap noMargin bold">{{track.trackName}}</p>
+            <p class="artist noWrap noMargin">{{track.artist}}</p>
+          </figcaption>
+          <figcaption>
+            <p class="duration noWrap noMargin">{{track.duration}}</p>
+          </figcaption>
+          <br />
+          <audio controls>
+            <source src="{{host}}/tracks/{{track.trackFile}}" type="audio/mpeg"/>
+            Your browser }}does not support the audio tag.
+          </audio>
+        </section>
+      </section> 
+      <section>
+        <h2>ID3 Data</h2>
+        <p class="bold">Title</p><p>{{track.trackName}}</p><br />
+        <p class="bold">Artist</p><p>{{track.artist}}</p><br />
+        <p class="bold">Duration</p><p>{{track.duration}}</p><br />
+        <p class="bold">Album Artists</p><p>{{track.albumArtists}}</p><br />
+        <p class="bold">Year</p><p>{{track.year}}</p><br />
+        <p class="bold">Track</p><p>{{track.track}}</p><br />
+        <p class="bold">Disk</p><p>{{track.disk}}</p><br />
+        <p class="bold">Genre</p><p>{{track.genre}}</p><br />
+      </section>
+		</main>
+	</body>
+</html>

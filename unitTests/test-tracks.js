@@ -7,12 +7,13 @@ test.beforeEach(async t => {
 	t.context.tracks = await new Tracks() // Using context so Tracks can be accessed by tests
 	await t.context.tracks.registerUser('doej', 'password', 'doej@gmail.com')
 	t.context.trackObj = { userID: 1, trackFile: 'test-track.mp3', trackName: 'test-track',
-		artist: 'artist', albumArt: 'albumArt.jpg', duration: '1:30'}
+		artist: 'artist', albumArt: 'albumArt.jpg', duration: '1:30', albumArtists: null, year: null,
+		track: null, disk: null, genre: null}
 })
 
 test('ADD TRACK : add a valid track to registered user', async test => {
 	/* Arrange */
-	test.plan(8) // Expecting 8 assertions
+	test.plan(13) // Expecting 8 assertions
 	const tracks = test.context.tracks
 	const trackObj = test.context.trackObj
 	try {
@@ -27,6 +28,7 @@ test('ADD TRACK : add a valid track to registered user', async test => {
 
 		// Check all fields added to database correctly
 		const userTrack = userTracks[0]
+		// 		console.log(userTrack)
 		for(const key in userTrack) {
 			if(key !== 'trackID') // trackID is auto incremented primary key in DB - will be returned by getTracks()
 				test.is(userTrack[key],trackObj[key],`${key} not added correctly`)
@@ -38,7 +40,7 @@ test('ADD TRACK : add a valid track to registered user', async test => {
 	}
 })
 
-test('ADD TRACK : error if adding duplicated track', async test => {
+test('ADD TRACK : error if adding duplicated track file', async test => {
 	/* Arrange */
 	test.plan(1)
 	const tracks = test.context.tracks
@@ -240,3 +242,94 @@ test('GET TRACKS : returns null if user has no uploaded tracks', async test => {
 		tracks.close()
 	}
 })
+
+test('GET TRACK : returns the track for a given trackID', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	const trackObj = test.context.trackObj
+	try {
+		/* Act */
+		await tracks.addTrack(trackObj)
+		const track = await tracks.getTrack(1)
+
+		/* Assert */
+		test.is(track.trackID, 1, 'did not return the specified track')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
+
+test('GET TRACK : returns null when the trackID does not exist', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	const trackObj = test.context.trackObj
+	try {
+		/* Act */
+		await tracks.addTrack(trackObj)
+		const track = await tracks.getTrack(2)
+		// only one track was added so trackID of 2 does not exist in table
+
+		/* Assert */
+		test.is(track, null, 'did not return null')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
+
+test('GET ALBUM ARTISTS TEXT : returns text format where array length > 1', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	try {
+		/* Act */
+		const text = await tracks.getArrayAsText(['Jim','Joe'])
+
+		/* Assert */
+		test.is(text, 'Jim, Joe', 'did not return correctly formatted text')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
+
+test('GET ARRAY TEXT : returns text format where array length = 1', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	try {
+		/* Act */
+		const text = await tracks.getArrayAsText(['Jim'])
+
+		/* Assert */
+		test.is(text, 'Jim', 'did not return correctly formatted text')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
+
+test('GET NO/OF TEXT : returns text format of track or disk metadata', async test => {
+	/* Arrange */
+	test.plan(1)
+	const tracks = test.context.tracks
+	try {
+		/* Act */
+		const text = await tracks.getNoOfAsText({no: 1,of: 2})
+
+		/* Assert */
+		test.is(text, '1/2', 'did not return correctly formatted text')
+	} catch(err) {
+		test.fail('unexpected error was thrown')
+	} finally {
+		tracks.close()
+	}
+})
+

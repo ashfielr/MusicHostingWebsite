@@ -8,7 +8,7 @@
 		<meta name="description" content="The secure home page">
 		<meta name="author" content="Robert Ashfield">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
-		<script type="module" src="main.js"></script>
+		<script type="module" src="{{host}}/main.js"></script>
 	</head>
 	<body>
 		<header>
@@ -35,8 +35,8 @@
             {{/if}}
             </figure>
             <figcaption class="track-content">
-              <p class="trackName noWrap noMargin bold">{{this.trackName}}</p>
-              <p class="artist noWrap noMargin">{{this.artist}}</p>
+              <a href="/home/track/{{trackID}}"><p class="trackName noWrap noMargin bold">{{this.trackName}}</p></a>
+              <a href="/home/track/{{trackID}}"><p class="artist noWrap noMargin">{{this.artist}}</p></a>
             </figcaption>
             <figcaption>
               <p class="duration noWrap noMargin">{{this.duration}}</p>

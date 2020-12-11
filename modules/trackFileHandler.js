@@ -80,23 +80,30 @@ class TrackFileHandler {
 		const metaData = await this.getMetaData(tempFilePath)
 
 		let trackDataObj
-		let albumArtFileName // If all the required data exists
 		if(metaData && metaData.artist.length > 0 && metaData.title) {
 			const duration = await getDisplayDurationString(metaData.duration) // Format duration
 			const fileName = await this.saveMP3File(tempFilePath, outputFileLocation) // Save mp3 file
-
 			// Return object containing required track data
 			trackDataObj = { trackFile: fileName, trackName: metaData.title,
-				artist: metaData.artist[0], duration: duration}
+				artist: metaData.artist[0], duration: duration, albumArtists: metaData.albumartist, year: metaData.year,
+				track: metaData.track, disk: metaData.disk, genre: metaData.genre}
+			return await this.setNullsAndAlbumArt(trackDataObj, metaData, outputFileLocation)
 
-			if(metaData.picture.length > 0) { // If album art exists - save it
-				albumArtFileName = await this.saveAlbumArt(metaData.picture[0].data, outputFileLocation)
-				trackDataObj.albumArt = albumArtFileName
-			}
-			return trackDataObj
 		} else {
 			return undefined
 		}
+	}
+
+	async setNullsAndAlbumArt(trackDataObj, metaData, outputFileLocation) {
+		if(metaData.albumartist.length === 0) trackDataObj.albumArtists = null
+		if(metaData.year === '') trackDataObj.year = null
+		if(metaData.genre.length === 0) trackDataObj.genre = null
+
+		if(metaData.picture.length > 0) { // If album art exists - save it
+			const albumArtFileName = await this.saveAlbumArt(metaData.picture[0].data, outputFileLocation)
+			trackDataObj.albumArt = albumArtFileName
+		}
+		return trackDataObj
 	}
 }
 
