@@ -3,6 +3,9 @@
 ## Link to live server ##
 >https://ashfielr-sem1.herokuapp.com/
 
+## Demonstration of Functionality - VIDEO ##
+[Video Link](5001cem_screencast.mp4)
+
 ## Features Implemented ##
 ### Stage 1 - Part 1 Functionality ###
 The home screen is only viewable once a user has logged in and displays a list of the tracks uploaded by that user with the following data being shown:
